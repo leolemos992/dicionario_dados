@@ -190,6 +190,7 @@ const layouts: R2D2Layout[] = [
 const layoutMappings: Record<string, string> = {
     'CLIENTES': 'CL',
     'PRODUTOS': 'PR',
+    'ENTIDADE': 'CL',
     // Adicione outros mapeamentos aqui, ex: 'FORNECEDORES': 'CL'
 };
 

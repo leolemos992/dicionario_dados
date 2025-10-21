@@ -12,7 +12,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX, Link, Download } from "lucide-react";
+import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX, Link, Download, ArrowLeft } from "lucide-react";
+import NextLink from 'next/link';
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -202,10 +203,16 @@ export default function DbAnalyzer() {
   }
   
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8 pt-0">
+    <div className="container mx-auto p-4 md:p-6 lg:p-8">
       <header className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-foreground">Analisador de Dicionário de Dados</h1>
         <div className="flex items-center gap-2">
+          <Button asChild variant="outline">
+            <NextLink href="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar para a Home
+            </NextLink>
+          </Button>
           <Button onClick={handleFullReset} variant="outline">
             <UploadCloud className="mr-2 h-4 w-4" />
             Carregar Novo Arquivo
