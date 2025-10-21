@@ -92,7 +92,15 @@ export default function DbAnalyzer() {
         }));
 
         summarizeTableColumns(dbSchemaForAI)
-          .then(result => setTableSummaries(result?.summaries || {}))
+          .then(result => {
+            if (result?.summaries) {
+              const summariesMap = result.summaries.reduce((acc, item) => {
+                acc[item.tableName] = item.summary;
+                return acc;
+              }, {} as Record<string, string>);
+              setTableSummaries(summariesMap);
+            }
+          })
           .catch(err => console.error("Error getting table summaries:", err));
 
       } catch (error: any) {

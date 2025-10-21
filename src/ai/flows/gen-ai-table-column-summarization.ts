@@ -28,8 +28,13 @@ const DatabaseSchema = z.array(TableSchema);
 
 export type DatabaseSchema = z.infer<typeof DatabaseSchema>;
 
+const SummaryItemSchema = z.object({
+  tableName: z.string().describe("The name of the table."),
+  summary: z.string().describe("The summary for the table.")
+});
+
 const TableSummariesSchema = z.object({
-    summaries: z.record(z.string()).describe("An object where keys are table names and values are their summaries."),
+    summaries: z.array(SummaryItemSchema).describe("An array of table summary objects."),
 });
 
 export type TableSummaries = z.infer<typeof TableSummariesSchema>;
@@ -38,7 +43,7 @@ const summarizePrompt = ai.definePrompt({
   name: 'tableColumnSummarizationPrompt',
   input: {schema: DatabaseSchema},
   output: {schema: TableSummariesSchema},
-  prompt: `You are a database expert. Given the following database schema, provide a succinct summary for each table. The output should be a JSON object where keys are the table names and values are the summaries.
+  prompt: `You are a database expert. Given the following database schema, provide a succinct summary for each table. The output should be a JSON object containing an array of summaries.
 
 {{#each this}}
 Table Name: {{name}}
