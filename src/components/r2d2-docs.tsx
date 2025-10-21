@@ -1,5 +1,7 @@
 'use client';
 
+import Link from "next/link";
+
 const SectionTitle = ({ children }: { children: React.ReactNode }) => <h2 className="text-3xl font-bold font-headline mt-12 mb-4 pb-2 border-b-2 border-primary">{children}</h2>;
 const SubTitle = ({ children }: { children: React.ReactNode }) => <h3 className="text-2xl font-semibold font-headline mt-8 mb-3">{children}</h3>;
 const SubSubTitle = ({ children }: { children: React.ReactNode }) => <h4 className="text-xl font-semibold font-headline mt-6 mb-2">{children}</h4>;
@@ -727,6 +729,27 @@ export function R2D2Docs() {
           <TableHeader headers={tableHeaders} />
           <TableBodyComponent data={cpData} />
         </TableWrapper>
+        
+      <SectionTitle>6. Exemplo de arquivo pronto</SectionTitle>
+      <Paragraph>
+        Confira abaixo um exemplo de arquivo pronto para importação de produtos tanto em Excel (.csv) quando em .txt.
+      </Paragraph>
+      <div className="my-6">
+        <img src="https://storage.googleapis.com/static.aiforge.co/project-assets/22a89369-3a67-4043-98a2-23c27e8f553f/r2d2-example.png" alt="Exemplo de arquivo de produto para R2D2" className="w-full rounded-lg border" />
+      </div>
+
+      <SectionTitle>Conclusão e Próximos Passos</SectionTitle>
+      <Paragraph>
+        Agora que você entende como o utilitário R2D2 funciona para importação e exportação de dados, o próximo passo é entender a estrutura do banco de dados com o qual você irá interagir. É aqui que o <strong>Analisador de Dicionário de Dados</strong> se torna essencial.
+      </Paragraph>
+      <Paragraph>
+        O Analisador permite que você carregue o arquivo de dicionário de dados (em formato HTML) e explore todas as tabelas, colunas, tipos de dados e relacionamentos. Com esse conhecimento, você poderá construir seus arquivos de importação (<Code>.csv</Code> ou <Code>.txt</Code>) para o R2D2 com precisão, garantindo que os dados correspondam exatamente ao layout esperado pelo sistema Uniplus.
+      </Paragraph>
+      <Important>
+        Use o <Link href="/analisador" className="font-bold underline hover:text-primary/80">Analisador de Dicionário de Dados</Link> para consultar a estrutura das tabelas antes de gerar seus arquivos para o R2D2. Isso minimizará erros e garantirá uma integração de dados bem-sucedida.
+      </Important>
     </article>
   )
 }
+
+    
