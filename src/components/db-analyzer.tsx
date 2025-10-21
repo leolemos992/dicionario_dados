@@ -5,14 +5,14 @@ import { useState, useEffect, useCallback, useMemo, useTransition } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { parseDataDictionary, type Table } from '@/lib/parser';
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, FileUp, Search, X, FileSearch, Rows, Type, Columns, UploadCloud, ChevronUp } from "lucide-react";
+import { Loader2, FileUp, Search, X, FileSearch, Rows, Type, Columns, UploadCloud, ChevronUp, FilterX } from "lucide-react";
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -117,7 +117,7 @@ export default function DbAnalyzer() {
     startTransition(() => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
       Object.entries(params).forEach(([key, value]) => {
-        if (value === null) {
+        if (value === null || value === undefined) {
           current.delete(key);
         } else {
           current.set(key, value);
@@ -134,6 +134,10 @@ export default function DbAnalyzer() {
   const handleExactMatchChange = (checked: boolean) => updateUrlParams({ exact: checked ? 'true' : null });
   const handleSelectTable = (tableName: string | null) => updateUrlParams({ tabela: tableName });
 
+  const handleClearFilters = () => {
+    updateUrlParams({ q: null, mode: 'all', exact: null });
+  };
+
   const filteredAndSortedTables = useMemo(() => {
     if (!tables) return [];
     let filtered = tables;
@@ -147,7 +151,7 @@ export default function DbAnalyzer() {
               case 'tableName': return matchFn(table.name);
               case 'columnName': return table.fields.some(f => matchFn(f.name));
               case 'dataType': return table.fields.some(f => matchFn(f.type));
-              default: return table.searchableText.includes(searchTerm.toLowerCase());
+              default: return table.searchableText.toLowerCase().includes(searchTerm.toLowerCase());
           }
       });
     }
@@ -175,7 +179,7 @@ export default function DbAnalyzer() {
         <div className="flex items-center gap-2">
           <Button onClick={handleFullReset} variant="outline">
             <UploadCloud className="mr-2 h-4 w-4" />
-            Limpar e carregar outro
+            Carregar Novo Arquivo
           </Button>
           <ModeToggle />
         </div>
@@ -206,9 +210,15 @@ export default function DbAnalyzer() {
             <div className="flex items-center space-x-2"><RadioGroupItem value="columnName" id="r-column" /><Label htmlFor="r-column">Nomes de Coluna</Label></div>
             <div className="flex items-center space-x-2"><RadioGroupItem value="dataType" id="r-type" /><Label htmlFor="r-type">Tipos de Dados</Label></div>
           </RadioGroup>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="exact-match" checked={isExactMatch} onCheckedChange={(checked) => handleExactMatchChange(checked as boolean)} />
-            <Label htmlFor="exact-match">Busca Exata</Label>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox id="exact-match" checked={isExactMatch} onCheckedChange={(checked) => handleExactMatchChange(checked as boolean)} />
+              <Label htmlFor="exact-match">Busca Exata</Label>
+            </div>
+            <Button onClick={handleClearFilters} variant="outline" size="sm" disabled={!searchTerm && searchMode === 'all' && !isExactMatch}>
+              <FilterX className="mr-2 h-4 w-4" />
+              Limpar Filtros
+            </Button>
           </div>
         </div>
         <div className="text-right text-sm text-muted-foreground mt-2">{filteredAndSortedTables.length} de {tables.length} tabelas encontradas.</div>
@@ -482,3 +492,6 @@ const BackToTop = () => {
     </Button>
   );
 };
+
+
+    
