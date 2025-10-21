@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, FileUp, Search, X, FileSearch, Rows, Type, Columns, UploadCloud, ChevronUp, FilterX } from "lucide-react";
+import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX } from "lucide-react";
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -36,6 +36,7 @@ export default function DbAnalyzer() {
   const [isPending, startTransition] = useTransition();
 
   const searchTerm = searchParams.get('q') || '';
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
   const searchMode = searchParams.get('mode') || 'all';
   const isExactMatch = searchParams.get('exact') === 'true';
   const selectedTableName = searchParams.get('tabela') || null;
@@ -53,6 +54,10 @@ export default function DbAnalyzer() {
       setIsLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm);
+  }, [searchTerm]);
 
   const processFileContent = useCallback((html: string) => {
     setIsProcessing(true);
@@ -112,6 +117,7 @@ export default function DbAnalyzer() {
     localStorage.removeItem('dicionarioHtml');
     setFileContent(null);
     setTables([]);
+    setLocalSearchTerm('');
     updateUrlParams({});
   };
 
@@ -119,7 +125,7 @@ export default function DbAnalyzer() {
     startTransition(() => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
       Object.entries(params).forEach(([key, value]) => {
-        if (value === null || value === undefined) {
+        if (value === null || value === '' || value === undefined) {
           current.delete(key);
         } else {
           current.set(key, value);
@@ -131,12 +137,21 @@ export default function DbAnalyzer() {
     });
   };
 
-  const handleSearchChange = (term: string) => updateUrlParams({ q: term || null });
+  const handleSearchSubmit = () => {
+    updateUrlParams({ q: localSearchTerm });
+  };
+  const handleSearchChange = (term: string) => {
+    setLocalSearchTerm(term);
+    if (!term) {
+      updateUrlParams({ q: null });
+    }
+  };
   const handleSearchModeChange = (mode: string) => updateUrlParams({ mode });
   const handleExactMatchChange = (checked: boolean) => updateUrlParams({ exact: checked ? 'true' : null });
   const handleSelectTable = (tableName: string | null) => updateUrlParams({ tabela: tableName });
 
   const handleClearFilters = () => {
+    setLocalSearchTerm('');
     updateUrlParams({ q: null, mode: 'all', exact: null });
   };
 
@@ -202,19 +217,24 @@ export default function DbAnalyzer() {
       
       <div className="my-6">
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input 
             type="text" 
             placeholder="Buscar em todas as tabelas, colunas, tipos..."
-            className="pl-10 h-12 text-lg"
-            value={searchTerm}
+            className="pl-4 pr-24 h-12 text-lg"
+            value={localSearchTerm}
             onChange={(e) => handleSearchChange(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
           />
-          {searchTerm && (
-            <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => handleSearchChange('')}>
-              <X className="h-4 w-4" />
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+            {localSearchTerm && (
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleSearchChange('')}>
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+            <Button size="icon" className="h-9 w-9" onClick={handleSearchSubmit} disabled={isPending}>
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
             </Button>
-          )}
+          </div>
         </div>
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <RadioGroup defaultValue={searchMode} onValueChange={handleSearchModeChange} className="flex flex-wrap gap-2">
