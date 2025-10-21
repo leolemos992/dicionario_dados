@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, FileUp, Search, X, Trash2, FileText, ChevronUp, FileSearch, Rows, Type, Columns } from "lucide-react";
+import { Loader2, FileUp, Search, X, Trash2, FileText, ChevronUp, FileSearch, Rows, Type, Columns, UploadCloud } from "lucide-react";
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -173,8 +173,9 @@ export default function DbAnalyzer() {
       <header className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-foreground">UniplusDB Insights</h1>
         <div className="flex items-center gap-2">
-          <Button onClick={handleFullReset} variant="destructive" size="icon" aria-label="Fechar Dicionário">
-            <Trash2 className="h-4 w-4" />
+          <Button onClick={handleFullReset} variant="outline">
+            <UploadCloud className="mr-2 h-4 w-4" />
+            Carregar outro arquivo
           </Button>
           <ModeToggle />
         </div>
@@ -428,7 +429,8 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
   );
 };
 
-const DbAnalyzerFallback = () => (
+function DbAnalyzerFallback() {
+  return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
       <Skeleton className="h-16 w-1/3 mb-6" />
       <div className="grid md:grid-cols-3 gap-6 mb-6">
@@ -442,7 +444,8 @@ const DbAnalyzerFallback = () => (
         <div className="md:col-span-3"><Skeleton className="h-[60vh] w-full" /></div>
       </div>
     </div>
-)
+  )
+}
 
 const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -479,3 +482,4 @@ const BackToTop = () => {
     </Button>
   );
 };
+
