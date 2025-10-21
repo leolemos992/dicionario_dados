@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-background">
+    <div className="flex min-h-screen flex-col items-center justify-center p-8 bg-background">
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold font-headline text-foreground">Bem-vindo</h1>
         <p className="text-muted-foreground text-xl mt-2">Selecione uma ferramenta para começar</p>
@@ -52,8 +52,6 @@ export default function Home() {
           </CardContent>
         </Card>
       </div>
-    </main>
+    </div>
   );
 }
-
-    

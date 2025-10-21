@@ -29,7 +29,20 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="flex flex-col min-h-screen">
+            <div className="flex-grow">{children}</div>
+            <footer className="w-full text-center p-4 text-sm text-muted-foreground">
+              criado por:{" "}
+              <a
+                href="https://www.instagram.com/leo.lemos992/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-foreground hover:underline"
+              >
+                @leo.lemos992
+              </a>
+            </footer>
+          </div>
         </ThemeProvider>
       </body>
     </html>

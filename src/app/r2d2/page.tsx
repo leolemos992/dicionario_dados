@@ -6,8 +6,8 @@ import { BackToTop } from '@/components/back-to-top';
 
 export default function R2D2Page() {
   return (
-    <main className="bg-background">
-      <div className="container mx-auto px-4 py-8">
+    <>
+      <div className="container mx-auto px-4 py-8 bg-background">
         <Button asChild variant="outline" className="mb-8">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -17,6 +17,6 @@ export default function R2D2Page() {
         <R2D2Docs />
       </div>
       <BackToTop />
-    </main>
+    </>
   );
 }

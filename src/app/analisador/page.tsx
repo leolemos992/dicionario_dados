@@ -29,12 +29,11 @@ function DbAnalyzerFallback() {
 
 export default function AnalisadorPage() {
   return (
-    <main className="min-h-screen">
+    <>
       <Suspense fallback={<DbAnalyzerFallback />}>
         <DbAnalyzer />
       </Suspense>
       <Toaster />
-      <BackToTop />
-    </main>
+    </>
   );
 }

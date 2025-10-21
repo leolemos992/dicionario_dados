@@ -266,7 +266,7 @@ export default function DbAnalyzer() {
         {(searchTerm) && <div className="text-right text-sm text-muted-foreground mt-2">{filteredTablesForSearch.length} de {tables.length} tabelas correspondem à busca principal.</div>}
       </div>
       
-      <main className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <aside className="md:col-span-1">
           <Card>
             <CardHeader className='pb-4'>
@@ -327,7 +327,7 @@ export default function DbAnalyzer() {
             </ScrollArea>
           </Card>
         </section>
-      </main>
+      </div>
 
        {isClient && <BackToTop />}
     </div>
