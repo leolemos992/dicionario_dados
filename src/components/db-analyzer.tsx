@@ -12,17 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, BrainCircuit, FileUp, Search, X, Trash2, FileText, ChevronUp, FileSearch, Rows, Type, Columns } from "lucide-react";
-import { analyzeDatabaseSchema } from '@/ai/flows/ai-powered-database-insights';
-import { summarizeTableColumns, type DatabaseSchema, type TableSummaries } from '@/ai/flows/gen-ai-table-column-summarization';
-import { summarizeTableInsights } from '@/ai/flows/ai-summarize-table-insights';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Loader2, FileUp, Search, X, Trash2, FileText, ChevronUp, FileSearch, Rows, Type, Columns } from "lucide-react";
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -41,12 +31,6 @@ export default function DbAnalyzer() {
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  const [schemaInsights, setSchemaInsights] = useState<string | null>(null);
-  const [tableSummaries, setTableSummaries] = useState<Record<string, string>>({});
-  const [isAiLoading, setIsAiLoading] = useState(false);
-  const [tableAiInsights, setTableAiInsights] = useState<Record<string, string>>({});
-  const [isTableAiLoading, setIsTableAiLoading] = useState<string | null>(null);
-
   const [isPending, startTransition] = useTransition();
 
   const searchTerm = searchParams.get('q') || '';
@@ -79,30 +63,6 @@ export default function DbAnalyzer() {
         setTables(parsedTables);
         setFileContent(html);
         localStorage.setItem('dicionarioHtml', html);
-        
-        const dbSchemaForAI: DatabaseSchema = parsedTables.map(t => ({
-          name: t.name,
-          description: t.description,
-          fields: t.fields.map(f => ({
-            name: f.name,
-            type: f.type,
-            size: f.size,
-            description: f.description,
-          })),
-        }));
-
-        summarizeTableColumns(dbSchemaForAI)
-          .then(result => {
-            if (result?.summaries) {
-              const summariesMap = result.summaries.reduce((acc, item) => {
-                acc[item.tableName] = item.summary;
-                return acc;
-              }, {} as Record<string, string>);
-              setTableSummaries(summariesMap);
-            }
-          })
-          .catch(err => console.error("Error getting table summaries:", err));
-
       } catch (error: any) {
         toast({
           variant: "destructive",
@@ -150,9 +110,6 @@ export default function DbAnalyzer() {
     localStorage.removeItem('dicionarioHtml');
     setFileContent(null);
     setTables([]);
-    setTableSummaries({});
-    setSchemaInsights(null);
-    setTableAiInsights({});
     updateUrlParams({});
   };
 
@@ -176,49 +133,6 @@ export default function DbAnalyzer() {
   const handleSearchModeChange = (mode: string) => updateUrlParams({ mode });
   const handleExactMatchChange = (checked: boolean) => updateUrlParams({ exact: checked ? 'true' : null });
   const handleSelectTable = (tableName: string | null) => updateUrlParams({ tabela: tableName });
-
-  const handleGetSchemaInsights = async () => {
-    if (!fileContent) return;
-    setIsAiLoading(true);
-    try {
-      const result = await analyzeDatabaseSchema(fileContent);
-      setSchemaInsights(result.insights);
-    } catch (error) {
-      console.error("Error fetching schema insights:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro na Análise de IA",
-        description: "Não foi possível obter os insights do esquema.",
-      });
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
-
-  const handleGetTableInsights = async (tableName: string) => {
-    const table = tables.find(t => t.name === tableName);
-    if (!table || !table.rawHtml) return;
-
-    setIsTableAiLoading(tableName);
-    try {
-      const result = await summarizeTableInsights(table.rawHtml);
-      // The AI flow returns a record, but the prompt is for a single table.
-      // We'll assume the most relevant insight is under a key, possibly 'insights' or the table name.
-      const insightKey = Object.keys(result)[0];
-      const insight = result[insightKey] || "Nenhum insight gerado.";
-      setTableAiInsights(prev => ({...prev, [tableName]: insight }));
-    } catch (error) {
-      console.error("Error fetching table insights:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro na Análise de IA",
-        description: `Não foi possível obter insights para a tabela ${tableName}.`,
-      });
-    } finally {
-      setIsTableAiLoading(null);
-    }
-  };
-
 
   const filteredAndSortedTables = useMemo(() => {
     if (!tables) return [];
@@ -259,23 +173,6 @@ export default function DbAnalyzer() {
       <header className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-foreground">UniplusDB Insights</h1>
         <div className="flex items-center gap-2">
-          <Dialog open={!!schemaInsights} onOpenChange={(open) => !open && setSchemaInsights(null)}>
-            <DialogTrigger asChild>
-              <Button onClick={handleGetSchemaInsights} variant="outline" disabled={isAiLoading}>
-                {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
-                Análise Geral com IA
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2"><BrainCircuit /> Insights Gerais do Esquema</DialogTitle>
-              </DialogHeader>
-              <ScrollArea className="h-[60vh] mt-4">
-                <div className="prose dark:prose-invert max-w-none pr-4 whitespace-pre-wrap">{schemaInsights}</div>
-              </ScrollArea>
-            </DialogContent>
-          </Dialog>
-
           <Button onClick={handleFullReset} variant="destructive" size="icon" aria-label="Fechar Dicionário">
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -347,12 +244,8 @@ export default function DbAnalyzer() {
                 {selectedTable ? (
                   <TableDetails 
                     table={selectedTable}
-                    tableSummary={tableSummaries[selectedTable.name]}
-                    tableAiInsight={tableAiInsights[selectedTable.name]}
                     searchTerm={searchTerm}
                     onSelectTable={handleSelectTable}
-                    onGetTableInsights={handleGetTableInsights}
-                    isTableAiLoading={isTableAiLoading === selectedTable.name}
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full min-h-[50vh] text-center">
@@ -462,50 +355,16 @@ const StatsPanel = ({ tables }: { tables: Table[] }) => {
   );
 };
 
-const TableDetails = ({ table, tableSummary, tableAiInsight, searchTerm, onSelectTable, onGetTableInsights, isTableAiLoading }: { 
+const TableDetails = ({ table, searchTerm, onSelectTable }: { 
   table: Table, 
-  tableSummary: string,
-  tableAiInsight: string,
   searchTerm: string, 
   onSelectTable: (name: string) => void,
-  onGetTableInsights: (name: string) => void,
-  isTableAiLoading: boolean
 }) => {
   return (
     <div>
       <h2 className="text-2xl font-bold font-headline mb-2"><Highlight text={table.name} term={searchTerm} /></h2>
       <p className="text-muted-foreground mb-4"><Highlight text={table.description} term={searchTerm} /></p>
-
-      {tableSummary && (
-        <Card className="mb-6 bg-secondary/50">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2"><BrainCircuit className="text-primary" /> Resumo da Tabela (IA)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm">{tableSummary}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      { tableAiInsight ? (
-         <Card className="mb-6 bg-secondary/50">
-         <CardHeader>
-           <CardTitle className="text-lg flex items-center gap-2"><BrainCircuit className="text-primary" /> Insights Detalhados (IA)</CardTitle>
-         </CardHeader>
-         <CardContent>
-           <p className="text-sm whitespace-pre-wrap">{tableAiInsight}</p>
-         </CardContent>
-       </Card>
-      ) : (
-        <div className="my-4">
-        <Button onClick={() => onGetTableInsights(table.name)} disabled={isTableAiLoading}>
-          {isTableAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
-          Gerar Insights da Tabela
-        </Button>
-        </div>
-      ) }
       
-
       <h3 className="text-xl font-semibold mb-2 mt-6">Campos ({table.fields.length})</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
