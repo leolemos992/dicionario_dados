@@ -2,6 +2,10 @@ import DbAnalyzer from "@/components/db-analyzer";
 import { Toaster } from "@/components/ui/toaster";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { BackToTop } from "@/components/back-to-top";
 
 function DbAnalyzerFallback() {
   return (
@@ -29,10 +33,19 @@ function DbAnalyzerFallback() {
 export default function AnalisadorPage() {
   return (
     <main className="min-h-screen">
+      <div className="container mx-auto px-4 pt-8">
+        <Button asChild variant="outline" className="mb-8">
+          <Link href="/">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar para a Home
+          </Link>
+        </Button>
+      </div>
       <Suspense fallback={<DbAnalyzerFallback />}>
         <DbAnalyzer />
       </Suspense>
       <Toaster />
+      <BackToTop />
     </main>
   );
 }

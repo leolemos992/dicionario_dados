@@ -16,6 +16,7 @@ import { Loader2, FileUp, Search, X, FileSearch, Rows, Type, Columns, UploadClou
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackToTop } from '@/components/back-to-top';
 
 
 // Main Component
@@ -173,7 +174,7 @@ export default function DbAnalyzer() {
   }
   
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8">
+    <div className="container mx-auto p-4 md:p-6 lg:p-8 pt-0">
       <header className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-foreground">Analisador de Dicionário de Dados</h1>
         <div className="flex items-center gap-2">
@@ -456,42 +457,3 @@ function DbAnalyzerFallback() {
     </div>
   )
 }
-
-const BackToTop = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  const toggleVisibility = () => {
-    if (window.pageYOffset > 300) {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  return (
-    <Button
-      variant="secondary"
-      size="icon"
-      className={`fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg transition-opacity ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-      onClick={scrollToTop}
-      aria-label="Voltar ao topo"
-    >
-      <ChevronUp className="h-6 w-6" />
-    </Button>
-  );
-};
-
-
-    
