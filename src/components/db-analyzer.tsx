@@ -31,6 +31,7 @@ export default function DbAnalyzer() {
   const [tables, setTables] = useState<Table[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [tableFilter, setTableFilter] = useState('');
   
   const [isPending, startTransition] = useTransition();
 
@@ -139,7 +140,7 @@ export default function DbAnalyzer() {
     updateUrlParams({ q: null, mode: 'all', exact: null });
   };
 
-  const filteredAndSortedTables = useMemo(() => {
+  const filteredTablesForSearch = useMemo(() => {
     if (!tables) return [];
     let filtered = tables;
     if (searchTerm) {
@@ -156,8 +157,19 @@ export default function DbAnalyzer() {
           }
       });
     }
-    return filtered.sort((a, b) => a.name.localeCompare(b.name));
+    return filtered;
   }, [tables, searchTerm, searchMode, isExactMatch]);
+
+  const filteredTablesForList = useMemo(() => {
+    let tablesToFilter = searchTerm ? filteredTablesForSearch : tables;
+    if (tableFilter) {
+      tablesToFilter = tablesToFilter.filter(table => 
+        table.name.toLowerCase().includes(tableFilter.toLowerCase())
+      );
+    }
+    return tablesToFilter.sort((a, b) => a.name.localeCompare(b.name));
+  }, [tables, searchTerm, filteredTablesForSearch, tableFilter]);
+
 
   const selectedTable = useMemo(() => {
     if (!selectedTableName) return null;
@@ -193,7 +205,7 @@ export default function DbAnalyzer() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input 
             type="text" 
-            placeholder="Buscar tabelas, colunas, tipos..."
+            placeholder="Buscar em todas as tabelas, colunas, tipos..."
             className="pl-10 h-12 text-lg"
             value={searchTerm}
             onChange={(e) => handleSearchChange(e.target.value)}
@@ -222,24 +234,40 @@ export default function DbAnalyzer() {
             </Button>
           </div>
         </div>
-        <div className="text-right text-sm text-muted-foreground mt-2">{filteredAndSortedTables.length} de {tables.length} tabelas encontradas.</div>
+        {(searchTerm) && <div className="text-right text-sm text-muted-foreground mt-2">{filteredTablesForSearch.length} de {tables.length} tabelas correspondem à busca principal.</div>}
       </div>
       
       <main className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <aside className="md:col-span-1">
           <Card>
-            <CardHeader><CardTitle>Tabelas</CardTitle></CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[60vh]">
+            <CardHeader className='pb-4'>
+              <CardTitle>Tabelas ({filteredTablesForList.length})</CardTitle>
+              <div className="relative mt-2">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                      placeholder="Filtrar tabelas..."
+                      value={tableFilter}
+                      onChange={(e) => setTableFilter(e.target.value)}
+                      className="pl-8 h-9"
+                  />
+                  {tableFilter && (
+                      <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={() => setTableFilter('')}>
+                          <X className="h-4 w-4" />
+                      </Button>
+                  )}
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <ScrollArea className="h-[calc(60vh-60px)]">
                 <ul>
-                  {filteredAndSortedTables.map(table => (
+                  {filteredTablesForList.map(table => (
                     <li key={table.name}>
                       <a 
                         href={`?tabela=${table.name}`}
                         onClick={(e) => { e.preventDefault(); handleSelectTable(table.name);}}
                         className={`block p-2 rounded-md transition-colors ${selectedTableName === table.name ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
                       >
-                       <Highlight text={table.name} term={searchTerm} />
+                       <Highlight text={table.name} term={searchTerm || tableFilter} />
                       </a>
                     </li>
                   ))}
