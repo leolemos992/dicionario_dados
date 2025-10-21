@@ -7,7 +7,7 @@ const SubTitle = ({ children }: { children: React.ReactNode }) => <h3 className=
 const SubSubTitle = ({ children }: { children: React.ReactNode }) => <h4 className="text-xl font-semibold font-headline mt-6 mb-2">{children}</h4>;
 const Paragraph = ({ children }: { children: React.ReactNode }) => <p className="leading-relaxed mb-4">{children}</p>;
 const Code = ({ children }: { children: React.ReactNode }) => <code className="bg-muted px-1.5 py-1 rounded-md text-sm font-mono text-foreground">{children}</code>;
-const Important = ({ children }: { children: React.ReactNode }) => <div className="bg-primary/10 border-l-4 border-primary text-primary-foreground p-4 rounded-r-lg my-4"><strong className="font-semibold text-primary">Importante:</strong> {children}</div>;
+const Important = ({ children }: { children: React.ReactNode }) => <div className="bg-primary/10 border-l-4 border-primary text-foreground p-4 rounded-r-lg my-4"><strong className="font-semibold text-primary">Importante:</strong> {children}</div>;
 const TableWrapper = ({ children }: { children: React.ReactNode }) => <div className="overflow-x-auto my-6"><table className="w-full text-sm">{children}</table></div>;
 const TableHeader = ({ headers }: { headers: string[] }) => (
   <thead className="text-left bg-muted">
@@ -751,5 +751,3 @@ export function R2D2Docs() {
     </article>
   )
 }
-
-    
