@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX } from "lucide-react";
+import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX, Link } from "lucide-react";
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -407,7 +407,7 @@ const StatsPanel = ({ tables }: { tables: Table[] }) => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Chaves Estrangeiras</CardTitle>
-          <Type className="h-4 w-4 text-muted-foreground" />
+          <Link className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent><div className="text-2xl font-bold">{totalFks}</div></CardContent>
       </Card>
