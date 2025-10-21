@@ -11,16 +11,20 @@ export const Highlight: React.FC<HighlightProps> = ({ text, term }) => {
   if (!term || !text) {
     return <>{text}</>;
   }
-  const parts = text.split(new RegExp(`(${escapeRegExp(term)})`, 'gi'));
+  const terms = term.split(' ').filter(Boolean);
+  const regex = new RegExp(`(${terms.map(escapeRegExp).join('|')})`, 'gi');
+  const parts = text.split(regex);
+  
   return (
     <>
-      {parts.map((part, i) =>
-        part.toLowerCase() === term.toLowerCase() ? (
+      {parts.map((part, i) => {
+        const isMatch = terms.some(t => part.toLowerCase() === t.toLowerCase());
+        return isMatch ? (
           <mark key={i}>{part}</mark>
         ) : (
           part
-        )
-      )}
+        );
+      })}
     </>
   );
 };

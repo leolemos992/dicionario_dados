@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useTransition } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { parseDataDictionary, type Table } from '@/lib/parser';
+import { parseDataDictionary, type Table, type Field } from '@/lib/parser';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -420,12 +420,39 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
   searchTerm: string, 
   onSelectTable: (name: string) => void,
 }) => {
+  const [columnFilter, setColumnFilter] = useState('');
+
+  const filteredFields = useMemo(() => {
+    if (!columnFilter) return table.fields;
+    return table.fields.filter(field => 
+      field.name.toLowerCase().includes(columnFilter.toLowerCase()) ||
+      field.type.toLowerCase().includes(columnFilter.toLowerCase()) ||
+      field.description.toLowerCase().includes(columnFilter.toLowerCase())
+    );
+  }, [table.fields, columnFilter]);
+
   return (
     <div>
       <h2 className="text-2xl font-bold font-headline mb-2"><Highlight text={table.name} term={searchTerm} /></h2>
       <p className="text-muted-foreground mb-4"><Highlight text={table.description} term={searchTerm} /></p>
       
-      <h3 className="text-xl font-semibold mb-2 mt-6">Colunas ({table.fields.length})</h3>
+      <div className="flex justify-between items-center mt-6 mb-2">
+        <h3 className="text-xl font-semibold">Colunas ({filteredFields.length} de {table.fields.length})</h3>
+        <div className="relative w-full max-w-xs">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+              placeholder="Filtrar colunas..."
+              value={columnFilter}
+              onChange={(e) => setColumnFilter(e.target.value)}
+              className="pl-8 h-9"
+          />
+          {columnFilter && (
+              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={() => setColumnFilter('')}>
+                  <X className="h-4 w-4" />
+              </Button>
+          )}
+        </div>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-left">
@@ -437,12 +464,12 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
             </tr>
           </thead>
           <tbody>
-            {table.fields.map(field => (
+            {filteredFields.map(field => (
               <tr key={field.name} className="border-b hover:bg-muted/50">
-                <td className="p-2"><Highlight text={field.name} term={searchTerm} /></td>
-                <td className="p-2"><Highlight text={field.type} term={searchTerm} /></td>
+                <td className="p-2"><Highlight text={field.name} term={searchTerm || columnFilter} /></td>
+                <td className="p-2"><Highlight text={field.type} term={searchTerm || columnFilter} /></td>
                 <td className="p-2"><Highlight text={field.size} term={searchTerm} /></td>
-                <td className="p-2"><Highlight text={field.description} term={searchTerm} /></td>
+                <td className="p-2"><Highlight text={field.description} term={searchTerm || columnFilter} /></td>
               </tr>
             ))}
           </tbody>
