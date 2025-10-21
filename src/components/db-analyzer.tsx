@@ -443,7 +443,8 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
     }
 
     const header = layout.fields.map(f => `"${f.identificacao}"`).join(';');
-    const blob = new Blob([header], { type: 'text/csv;charset=utf-8;' });
+    // Add BOM for UTF-8 compatibility with Excel
+    const blob = new Blob(['\uFEFF' + header], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
