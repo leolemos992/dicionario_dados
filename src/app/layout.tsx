@@ -3,8 +3,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "UniplusDB Insights",
-  description: "Analisador de Dicionário de Dados para UniplusDB",
+  title: "Analisador de Dicionário de Dados",
+  description: "Analisador de Dicionário de Dados",
 };
 
 export default function RootLayout({

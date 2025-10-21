@@ -171,11 +171,11 @@ export default function DbAnalyzer() {
   return (
     <div className="container mx-auto p-4 md:p-6 lg:p-8">
       <header className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-foreground">UniplusDB Insights</h1>
+        <h1 className="text-3xl font-bold text-foreground">Analisador de Dicionário de Dados</h1>
         <div className="flex items-center gap-2">
           <Button onClick={handleFullReset} variant="outline">
             <UploadCloud className="mr-2 h-4 w-4" />
-            Carregar outro arquivo
+            Limpar e carregar outro
           </Button>
           <ModeToggle />
         </div>
@@ -293,9 +293,9 @@ const UploadView = ({ onFileSelect, isProcessing }: { onFileSelect: (file: File)
     <div className="flex items-center justify-center min-h-screen">
       <div className="w-full max-w-2xl mx-auto text-center">
         <FileText className="mx-auto h-16 w-16 text-primary" />
-        <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">UniplusDB Insights</h1>
+        <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">Analisador de Dicionário de Dados</h1>
         <p className="mt-6 text-lg leading-8 text-muted-foreground">
-          Uma ferramenta inteligente para analisar seu dicionário de dados UniplusDB.
+          Uma ferramenta para analisar seu dicionário de dados.
         </p>
         <label
           htmlFor="file-upload"
