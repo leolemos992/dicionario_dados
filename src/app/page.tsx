@@ -35,7 +35,7 @@ export default function Home() {
           <CardHeader>
             <div className="flex items-center gap-4">
               <div className="bg-accent/10 p-3 rounded-full">
-                <Share2 className="w-6 h-6 text-accent-foreground" />
+                <Share2 className="w-6 h-6 text-accent" />
               </div>
               <CardTitle className="text-2xl">Documentação R2D2</CardTitle>
             </div>
@@ -55,3 +55,5 @@ export default function Home() {
     </main>
   );
 }
+
+    
