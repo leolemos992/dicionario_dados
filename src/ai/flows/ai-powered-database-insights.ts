@@ -32,9 +32,7 @@ const analyzeDatabaseSchemaPrompt = ai.definePrompt({
   prompt: `You are an AI assistant that analyzes database schemas to identify potential data anomalies and valuable relationships.
 
   Analyze the following database schema provided in HTML format:
-  ```html
   {{{input}}}
-  ```
 
   Provide a summary of your insights, highlighting any potential issues, relationships, or valuable information that a database expert should investigate.`,  
 });
