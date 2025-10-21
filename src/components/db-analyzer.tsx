@@ -42,7 +42,7 @@ export default function DbAnalyzer() {
   const [isProcessing, setIsProcessing] = useState(false);
   
   const [schemaInsights, setSchemaInsights] = useState<string | null>(null);
-  const [tableSummaries, setTableSummaries] = useState<TableSummaries>({});
+  const [tableSummaries, setTableSummaries] = useState<Record<string, string>>({});
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [tableAiInsights, setTableAiInsights] = useState<Record<string, string>>({});
   const [isTableAiLoading, setIsTableAiLoading] = useState<string | null>(null);
@@ -92,7 +92,7 @@ export default function DbAnalyzer() {
         }));
 
         summarizeTableColumns(dbSchemaForAI)
-          .then(summaries => setTableSummaries(summaries || {}))
+          .then(result => setTableSummaries(result?.summaries || {}))
           .catch(err => console.error("Error getting table summaries:", err));
 
       } catch (error: any) {
