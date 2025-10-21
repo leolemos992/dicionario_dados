@@ -1,7 +1,8 @@
 import { R2D2Docs } from '@/components/r2d2-docs';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronUp } from 'lucide-react';
 import Link from 'next/link';
+import { BackToTop } from '@/components/back-to-top';
 
 export default function R2D2Page() {
   return (
@@ -15,6 +16,7 @@ export default function R2D2Page() {
         </Button>
         <R2D2Docs />
       </div>
+      <BackToTop />
     </main>
   );
 }
