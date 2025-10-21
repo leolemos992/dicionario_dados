@@ -12,11 +12,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX, Link } from "lucide-react";
+import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX, Link, Download } from "lucide-react";
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
 import { BackToTop } from '@/components/back-to-top';
+import { getR2D2Layout } from '@/lib/r2d2-layouts';
 
 
 // Main Component
@@ -421,6 +422,35 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
   onSelectTable: (name: string) => void,
 }) => {
   const [columnFilter, setColumnFilter] = useState('');
+  const { toast } = useToast();
+
+  const handleGenerateModel = () => {
+    const layout = getR2D2Layout(table.name);
+    if (!layout) {
+      toast({
+        variant: "destructive",
+        title: "Layout não encontrado",
+        description: `Não foi encontrado um layout R2D2 para a tabela "${table.name}".`,
+      });
+      return;
+    }
+
+    const header = layout.fields.map(f => `"${f.identificacao}"`).join(';');
+    const blob = new Blob([header], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `modelo_r2d2_${layout.id.toLowerCase()}_${table.name.toLowerCase()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+      title: "Modelo Gerado",
+      description: `O modelo para o layout ${layout.id} foi baixado.`,
+    });
+  };
+
+  const r2d2Layout = useMemo(() => getR2D2Layout(table.name), [table.name]);
 
   const filteredFields = useMemo(() => {
     if (!columnFilter) return table.fields;
@@ -433,7 +463,15 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold font-headline mb-2"><Highlight text={table.name} term={searchTerm} /></h2>
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-2">
+        <h2 className="text-2xl font-bold font-headline"><Highlight text={table.name} term={searchTerm} /></h2>
+        {r2d2Layout && (
+            <Button onClick={handleGenerateModel} size="sm">
+              <Download className="mr-2 h-4 w-4" />
+              Gerar Modelo R2D2 ({r2d2Layout.id})
+            </Button>
+        )}
+      </div>
       <p className="text-muted-foreground mb-4"><Highlight text={table.description} term={searchTerm} /></p>
       
       <div className="flex justify-between items-center mt-6 mb-2">
