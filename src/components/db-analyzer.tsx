@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, FileUp, Search, X, Trash2, FileText, ChevronUp, FileSearch, Rows, Type, Columns, UploadCloud } from "lucide-react";
+import { Loader2, FileUp, Search, X, FileSearch, Rows, Type, Columns, UploadCloud, ChevronUp } from "lucide-react";
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -292,10 +292,10 @@ const UploadView = ({ onFileSelect, isProcessing }: { onFileSelect: (file: File)
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="w-full max-w-2xl mx-auto text-center">
-        <FileText className="mx-auto h-16 w-16 text-primary" />
+        <UploadCloud className="mx-auto h-16 w-16 text-primary" />
         <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">Analisador de Dicionário de Dados</h1>
         <p className="mt-6 text-lg leading-8 text-muted-foreground">
-          Uma ferramenta para analisar seu dicionário de dados.
+          Arraste e solte o arquivo HTML do seu dicionário de dados para começar a análise.
         </p>
         <label
           htmlFor="file-upload"
@@ -312,7 +312,7 @@ const UploadView = ({ onFileSelect, isProcessing }: { onFileSelect: (file: File)
             ) : (
               <>
                 <FileUp className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="mt-4 font-semibold text-foreground">Arraste e solte o arquivo <code className="bg-muted px-1 py-0.5 rounded">dicionariodados.html</code></p>
+                <p className="mt-4 font-semibold text-foreground">Arraste e solte o arquivo <code className="bg-muted px-1 py-0.5 rounded">.html</code> aqui</p>
                 <p className="text-sm text-muted-foreground">ou clique para selecionar</p>
               </>
             )}
@@ -366,7 +366,7 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
       <h2 className="text-2xl font-bold font-headline mb-2"><Highlight text={table.name} term={searchTerm} /></h2>
       <p className="text-muted-foreground mb-4"><Highlight text={table.description} term={searchTerm} /></p>
       
-      <h3 className="text-xl font-semibold mb-2 mt-6">Campos ({table.fields.length})</h3>
+      <h3 className="text-xl font-semibold mb-2 mt-6">Colunas ({table.fields.length})</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-left">
@@ -482,4 +482,3 @@ const BackToTop = () => {
     </Button>
   );
 };
-
