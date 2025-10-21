@@ -19,7 +19,6 @@ import { Highlight } from './highlight';
 import { Skeleton } from "@/components/ui/skeleton";
 import { BackToTop } from '@/components/back-to-top';
 import { getR2D2Layout } from '@/lib/r2d2-layouts';
-import { analyzeDatabaseSchema } from '@/ai/flows/ai-powered-database-insights';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
@@ -311,34 +310,19 @@ export default function DbAnalyzer() {
           <Card className="h-full">
             <ScrollArea className="h-[calc(60vh+88px)] p-1">
               <div className="p-6">
-                 <Tabs defaultValue="details">
-                  <TabsList>
-                    <TabsTrigger value="details">Detalhes da Tabela</TabsTrigger>
-                    <TabsTrigger value="ai-map"><Bot className="mr-2 h-4 w-4" /> Mapa de Dados (IA)</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="details">
-                    {selectedTable ? (
-                      <TableDetails 
-                        table={selectedTable}
-                        searchTerm={searchTerm}
-                        onSelectTable={handleSelectTable}
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full min-h-[50vh] text-center">
-                        <FileSearch className="w-16 h-16 text-muted-foreground mb-4" />
-                        <h2 className="text-2xl font-semibold">Selecione uma Tabela</h2>
-                        <p className="text-muted-foreground">Escolha uma tabela na lista à esquerda para ver seus detalhes.</p>
-                      </div>
-                    )}
-                  </TabsContent>
-                  <TabsContent value="ai-map">
-                    {fileContent ? (
-                        <DataMap fileContent={fileContent} />
-                    ) : (
-                        <p>Carregue um arquivo para gerar o mapa de dados.</p>
-                    )}
-                  </TabsContent>
-                </Tabs>
+                {selectedTable ? (
+                  <TableDetails 
+                    table={selectedTable}
+                    searchTerm={searchTerm}
+                    onSelectTable={handleSelectTable}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full min-h-[50vh] text-center">
+                    <FileSearch className="w-16 h-16 text-muted-foreground mb-4" />
+                    <h2 className="text-2xl font-semibold">Selecione uma Tabela</h2>
+                    <p className="text-muted-foreground">Escolha uma tabela na lista à esquerda para ver seus detalhes.</p>
+                  </div>
+                )}
               </div>
             </ScrollArea>
           </Card>
@@ -407,51 +391,6 @@ const UploadView = ({ onFileSelect, isProcessing }: { onFileSelect: (file: File)
     </div>
   );
 };
-
-const DataMap = ({ fileContent }: { fileContent: string }) => {
-    const [insights, setInsights] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string>('');
-
-    useEffect(() => {
-        const getInsights = async () => {
-            setIsLoading(true);
-            setError('');
-            try {
-                const result = await analyzeDatabaseSchema(fileContent);
-                setInsights(result.insights);
-            } catch (e: any) {
-                console.error("Error analyzing database schema:", e);
-                setError("Falha ao gerar o mapa de dados. Tente novamente.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (fileContent) {
-            getInsights();
-        }
-    }, [fileContent]);
-
-    return (
-        <div className="prose prose-sm dark:prose-invert max-w-none">
-            <h2 className="text-2xl font-bold font-headline">Análise do Esquema do Banco de Dados</h2>
-            {isLoading && (
-                <div className="space-y-4">
-                    <Skeleton className="h-4 w-1/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                </div>
-            )}
-            {error && <p className="text-destructive">{error}</p>}
-            {!isLoading && !error && (
-                <div dangerouslySetInnerHTML={{ __html: insights.replace(/\n/g, '<br />') }} />
-            )}
-        </div>
-    );
-};
-
 
 const StatsPanel = ({ tables }: { tables: Table[] }) => {
   const totalFields = useMemo(() => tables.reduce((acc, t) => acc + t.fields.length, 0), [tables]);
