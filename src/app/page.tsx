@@ -1,38 +1,57 @@
-import DbAnalyzer from "@/components/db-analyzer";
-import { Toaster } from "@/components/ui/toaster";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-
-function DbAnalyzerFallback() {
-  return (
-    <div className="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
-      <Skeleton className="h-16 w-1/3 mb-6" />
-      <div className="grid md:grid-cols-3 gap-6 mb-6">
-        <Skeleton className="h-28 w-full" />
-        <Skeleton className="h-28 w-full" />
-        <Skeleton className="h-28 w-full" />
-      </div>
-      <Skeleton className="h-12 w-full mb-6" />
-      <div className="flex gap-6">
-        <div className="w-1/4">
-          <Skeleton className="h-96 w-full" />
-        </div>
-        <div className="w-3/4">
-          <Skeleton className="h-96 w-full" />
-        </div>
-      </div>
-    </div>
-  )
-}
-
+import { ArrowRight, BookText, Share2 } from "lucide-react";
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      <Suspense fallback={<DbAnalyzerFallback />}>
-        <DbAnalyzer />
-      </Suspense>
-      <Toaster />
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-background">
+      <div className="text-center mb-12">
+        <h1 className="text-5xl font-bold font-headline text-foreground">Bem-vindo</h1>
+        <p className="text-muted-foreground text-xl mt-2">Selecione uma ferramenta para começar</p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <div className="bg-primary/10 p-3 rounded-full">
+                <BookText className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-2xl">Analisador de Dicionário de Dados</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CardDescription className="mb-4">
+              Faça o upload de um arquivo de dicionário de dados em HTML para analisar tabelas, colunas e chaves estrangeiras de forma interativa.
+            </CardDescription>
+            <Button asChild variant="outline">
+              <Link href="/analisador">
+                Acessar Analisador <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <div className="bg-accent/10 p-3 rounded-full">
+                <Share2 className="w-6 h-6 text-accent-foreground" />
+              </div>
+              <CardTitle className="text-2xl">Documentação R2D2</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CardDescription className="mb-4">
+              Consulte a documentação completa do utilitário R2D2 para importação e exportação de dados no sistema Uniplus.
+            </CardDescription>
+            <Button asChild>
+              <Link href="/r2d2">
+                Ver Documentação <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </main>
   );
 }
