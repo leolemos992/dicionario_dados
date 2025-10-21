@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 // Main Component
