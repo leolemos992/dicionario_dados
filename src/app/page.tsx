@@ -8,7 +8,7 @@ const tools = [
     title: "Analisador de Dicionário",
     href: "/analisador",
     icon: <Database className="w-6 h-6 text-primary" />,
-    description: "Faça upload de um arquivo HTML para analisar tabelas, colunas e chaves de forma interativa.",
+    description: "Faça upload do dicionário de dados do Uniplus para analisar tabelas e colunas de forma interativa",
     cta: "Acessar Analisador",
     variant: "default" as const,
   },
