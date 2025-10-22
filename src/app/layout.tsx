@@ -3,8 +3,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Analisador de Dicionário de Dados",
-  description: "Analisador de Dicionário de Dados",
+  title: "UniplusDB Insights",
+  description: "Análise Inteligente de Dicionário de Dados Uniplus",
 };
 
 export default function RootLayout({
@@ -30,14 +30,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="flex flex-col min-h-screen">
-            <div className="flex-grow">{children}</div>
-            <footer className="w-full text-center p-4 text-sm text-muted-foreground">
-              criado por:{" "}
+            <main className="flex-grow">{children}</main>
+            <footer className="w-full text-center p-6 text-sm text-muted-foreground">
+              Criado por{" "}
               <a
                 href="https://www.instagram.com/leo.lemos992/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-foreground hover:underline"
+                className="font-medium text-primary hover:underline"
               >
                 @leo.lemos992
               </a>
