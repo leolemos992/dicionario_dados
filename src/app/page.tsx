@@ -40,9 +40,6 @@ export default function Home() {
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Análise Inteligente de Banco de Dados Uniplus
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground">
-              Ferramentas poderosas para explorar, analisar e entender a estrutura de dados do seu ERP Uniplus como nunca antes.
-            </p>
           </div>
 
           <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">

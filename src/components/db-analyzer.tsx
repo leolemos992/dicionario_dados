@@ -365,7 +365,7 @@ const UploadView = ({ onFileSelect, isProcessing }: { onFileSelect: (file: File)
             ) : (
               <>
                 <FileUp className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="mt-4 font-semibold text-foreground">Arraste e solte o arquivo <code className="bg-muted px-1.5 py-1 rounded-sm text-sm">.html</code> aqui</p>
+                <p className="mt-4 font-semibold text-foreground">Arraste e solte o arquivo <code className="font-mono bg-muted px-1.5 py-1 rounded-sm text-sm">.html</code> aqui</p>
                 <p className="text-sm text-muted-foreground">ou clique para selecionar</p>
               </>
             )}
