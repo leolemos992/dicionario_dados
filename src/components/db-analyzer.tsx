@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useTransition } from 'react';
@@ -12,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX, Link, Download, ArrowLeft, Bot } from "lucide-react";
+import { Loader2, FileUp, Search, X, FileSearch, Rows, Columns, UploadCloud, ChevronUp, FilterX, Link, Download, ArrowLeft, Bot, ChevronDown } from "lucide-react";
 import NextLink from 'next/link';
 import { ModeToggle } from './mode-toggle';
 import { Highlight } from './highlight';
@@ -20,6 +19,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BackToTop } from '@/components/back-to-top';
 import { getR2D2Layout } from '@/lib/r2d2-layouts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 
 // Main Component
@@ -429,7 +434,13 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
   onSelectTable: (name: string) => void,
 }) => {
   const [columnFilter, setColumnFilter] = useState('');
+  const [selectedFields, setSelectedFields] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Reset selected fields when table changes
+    setSelectedFields({});
+  }, [table]);
 
   const handleGenerateModel = () => {
     const layout = getR2D2Layout(table.name);
@@ -443,7 +454,6 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
     }
 
     const header = layout.fields.map(f => `"${f.identificacao}"`).join(';');
-    // Add BOM for UTF-8 compatibility with Excel
     const blob = new Blob(['\uFEFF' + header], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -453,8 +463,33 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
     link.click();
     document.body.removeChild(link);
     toast({
-      title: "Modelo Gerado",
+      title: "Modelo Padrão Gerado",
       description: `O modelo para o layout ${layout.id} foi baixado.`,
+    });
+  };
+
+  const handleGenerateCustomModel = () => {
+    const selectedColumns = table.fields.filter(field => selectedFields[field.name]);
+    if (selectedColumns.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Nenhuma coluna selecionada",
+        description: "Selecione ao menos uma coluna para gerar o modelo personalizado.",
+      });
+      return;
+    }
+    const header = selectedColumns.map(f => `"${f.name}"`).join(';');
+    const blob = new Blob(['\uFEFF' + header], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `modelo_personalizado_${table.name.toLowerCase()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+      title: "Modelo Personalizado Gerado",
+      description: `O modelo com ${selectedColumns.length} colunas foi baixado.`,
     });
   };
 
@@ -469,15 +504,42 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
     );
   }, [table.fields, columnFilter]);
 
+  const handleSelectAll = (checked: boolean) => {
+    const newSelectedFields: Record<string, boolean> = {};
+    if (checked) {
+      filteredFields.forEach(field => {
+        newSelectedFields[field.name] = true;
+      });
+    }
+    setSelectedFields(newSelectedFields);
+  };
+  
+  const allFilteredSelected = filteredFields.length > 0 && filteredFields.every(field => selectedFields[field.name]);
+  const isIndeterminate = filteredFields.some(field => selectedFields[field.name]) && !allFilteredSelected;
+
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-2">
         <h2 className="text-2xl font-bold font-headline"><Highlight text={table.name} term={searchTerm} /></h2>
         {r2d2Layout && (
-            <Button onClick={handleGenerateModel} size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Gerar Modelo R2D2 ({r2d2Layout.id})
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm">
+                  <Download className="mr-2 h-4 w-4" />
+                  Gerar Modelo R2D2
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleGenerateModel}>
+                  Gerar modelo padrão ({r2d2Layout.id})
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleGenerateCustomModel} disabled={Object.keys(selectedFields).length === 0}>
+                  Gerar com colunas selecionadas
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
         )}
       </div>
       <p className="text-muted-foreground mb-4"><Highlight text={table.description} term={searchTerm} /></p>
@@ -503,6 +565,14 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
         <table className="w-full text-sm">
           <thead className="text-left">
             <tr className="border-b">
+              <th className="p-2 w-10">
+                <Checkbox
+                  checked={allFilteredSelected}
+                  onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                  aria-label="Selecionar todas as colunas visíveis"
+                  data-state={isIndeterminate ? 'indeterminate' : (allFilteredSelected ? 'checked' : 'unchecked')}
+                />
+              </th>
               <th className="p-2 font-semibold">Nome</th>
               <th className="p-2 font-semibold">Tipo</th>
               <th className="p-2 font-semibold">Tamanho</th>
@@ -512,6 +582,15 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
           <tbody>
             {filteredFields.map(field => (
               <tr key={field.name} className="border-b hover:bg-muted/50">
+                 <td className="p-2">
+                  <Checkbox
+                    checked={selectedFields[field.name] || false}
+                    onCheckedChange={(checked) => {
+                      setSelectedFields(prev => ({...prev, [field.name]: checked as boolean}))
+                    }}
+                    aria-label={`Selecionar coluna ${field.name}`}
+                  />
+                </td>
                 <td className="p-2"><Highlight text={field.name} term={searchTerm || columnFilter} /></td>
                 <td className="p-2"><Highlight text={field.type} term={searchTerm || columnFilter} /></td>
                 <td className="p-2"><Highlight text={field.size} term={searchTerm} /></td>
@@ -578,3 +657,5 @@ function DbAnalyzerFallback() {
     </div>
   )
 }
+
+    
