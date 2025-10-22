@@ -28,7 +28,7 @@ export default function Home() {
       <header className="flex items-center justify-between p-4 px-6 border-b">
         <div className="flex items-center gap-2">
           <BrainCircuit className="w-8 h-8 text-primary" />
-          <h1 className="text-xl font-semibold tracking-tighter">UniplusDB Insights</h1>
+          <h1 className="text-xl font-semibold tracking-tighter">db_insights</h1>
         </div>
         <nav>
           {/* Future navigation links can go here */}
@@ -38,7 +38,7 @@ export default function Home() {
         <div className="container relative py-16 md:py-24 lg:py-32">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              Análise Inteligente de Banco de Dados Uniplus
+              Análise Inteligente de Banco de Dados
             </h1>
           </div>
 
