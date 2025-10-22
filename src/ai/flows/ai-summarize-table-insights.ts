@@ -1,4 +1,3 @@
-// 'use server'
 'use server';
 /**
  * @fileOverview A Genkit flow to provide AI-powered insights into a table schema.

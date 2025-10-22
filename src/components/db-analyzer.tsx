@@ -535,7 +535,7 @@ const TableDetails = ({ table, searchTerm, onSelectTable }: {
                 <DropdownMenuItem onClick={handleGenerateModel}>
                   Gerar modelo padrão ({r2d2Layout.id})
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleGenerateCustomModel} disabled={Object.keys(selectedFields).length === 0}>
+                <DropdownMenuItem onClick={handleGenerateCustomModel} disabled={Object.values(selectedFields).every(v => !v)}>
                   Gerar com colunas selecionadas
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -657,5 +657,3 @@ function DbAnalyzerFallback() {
     </div>
   )
 }
-
-    
