@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const tools = [
   {
-    title: "Analisador de Dicionário",
+    title: "Analisador de Dados Interativo",
     href: "/analisador",
     icon: <Database className="w-6 h-6 text-primary" />,
     description: "Faça upload do dicionário de dados do Uniplus para analisar tabelas e colunas de forma interativa",

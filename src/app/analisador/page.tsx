@@ -41,7 +41,7 @@ export default function AnalisadorPage() {
               Voltar
             </Link>
           </Button>
-        <h1 className="text-xl font-semibold tracking-tighter">Analisador de Dicionário</h1>
+        <h1 className="text-xl font-semibold tracking-tighter">Analisador de Dados Interativo</h1>
         <ModeToggle />
       </header>
       <main className="flex-grow">
